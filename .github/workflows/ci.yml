@@ -1,0 +1,31 @@
+name: ci
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          # No go.sum (no dependencies), so key the cache on go.mod instead.
+          cache-dependency-path: go.mod
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: go build
+        run: go build ./...
+
+      - name: go test
+        run: go test ./...
